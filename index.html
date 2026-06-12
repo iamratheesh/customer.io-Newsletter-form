@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Lead Form Test</title>
+    <title>Customer.io Test Form</title>
 
     <style>
       body {
@@ -17,11 +17,11 @@
         margin-bottom: 20px;
       }
 
-      .scenario-buttons {
+      .buttons {
         display: flex;
         flex-wrap: wrap;
         gap: 10px;
-        margin-bottom: 25px;
+        margin-bottom: 20px;
       }
 
       button {
@@ -39,36 +39,34 @@
         font-size: 14px;
       }
 
-      textarea {
-        width: 100%;
-        min-height: 250px;
-        margin-top: 20px;
-        font-family: monospace;
-      }
-
       .submit-btn {
-        background: #0070f3;
+        background: #2563eb;
         color: white;
         border: none;
+      }
+
+      textarea {
+        margin-top: 20px;
+        width: 100%;
+        height: 250px;
+        font-family: monospace;
       }
     </style>
   </head>
   <body>
-    <h1>Salesforce / Customer.io Test Form</h1>
+    <h1>Customer.io Test Form</h1>
 
-    <div class="scenario-buttons">
-      <button type="button" onclick="loadScenario1()">Scenario 1</button>
-      <button type="button" onclick="loadScenario2()">Scenario 2</button>
-      <button type="button" onclick="loadScenario3()">Scenario 3</button>
-      <button type="button" onclick="loadScenario4()">Scenario 4</button>
-      <button type="button" onclick="loadScenario5()">Scenario 5</button>
-      <button type="button" onclick="loadScenario6()">Scenario 6</button>
+    <div class="buttons">
+      <button onclick="scenario1()">Scenario 1</button>
+      <button onclick="scenario2()">Scenario 2</button>
+      <button onclick="scenario3()">Scenario 3</button>
+      <button onclick="scenario4()">Scenario 4</button>
+      <button onclick="scenario5()">Scenario 5</button>
+      <button onclick="scenario6()">Scenario 6</button>
     </div>
 
-    <form name="lead-form" method="POST" data-netlify="true">
-      <input type="hidden" name="form-name" value="lead-form" />
-
-      <input type="email" name="email" placeholder="Email" />
+    <form id="lead-form">
+      <input type="email" name="email" placeholder="Email" required />
 
       <input type="text" name="firstName" placeholder="First Name" />
 
@@ -86,60 +84,46 @@
 
       <input type="text" name="submittedAt" placeholder="Submitted At" />
 
-      <button class="submit-btn" type="submit">Submit to Netlify</button>
+      <button type="submit" class="submit-btn">Submit</button>
     </form>
 
     <h3>Payload Preview</h3>
-
     <textarea id="preview" readonly></textarea>
 
     <script>
-      const fields = [
-        "email",
-        "firstName",
-        "lastName",
-        "formName",
-        "source",
-        "utm_source",
-        "utm_medium",
-        "utm_campaign",
-        "submittedAt",
-      ];
+      const form = document.getElementById("lead-form");
 
       function fill(data) {
-        fields.forEach((field) => {
-          const input = document.querySelector(`[name="${field}"]`);
-          input.value = data[field] || "";
+        Object.keys(data).forEach((key) => {
+          const field = form.querySelector(`[name="${key}"]`);
+
+          if (field) {
+            field.value = data[key];
+          }
         });
 
         updatePreview();
       }
 
       function updatePreview() {
-        const payload = {};
+        const data = {};
 
-        fields.forEach((field) => {
-          const value = document.querySelector(`[name="${field}"]`).value;
-
+        new FormData(form).forEach((value, key) => {
           if (value) {
-            payload[field] = value;
+            data[key] = value;
           }
         });
 
         document.getElementById("preview").value = JSON.stringify(
-          payload,
+          data,
           null,
           2,
         );
       }
 
-      fields.forEach((field) => {
-        document
-          .querySelector(`[name="${field}"]`)
-          .addEventListener("input", updatePreview);
-      });
+      form.addEventListener("input", updatePreview);
 
-      function loadScenario1() {
+      function scenario1() {
         fill({
           email: "newsletter.user@example.com",
           source: "newsletter_signup",
@@ -149,7 +133,7 @@
         });
       }
 
-      function loadScenario2() {
+      function scenario2() {
         fill({
           email: "existing.contact@example.com",
           source: "newsletter_signup",
@@ -159,7 +143,7 @@
         });
       }
 
-      function loadScenario3() {
+      function scenario3() {
         fill({
           email: "sophia.reed@example.com",
           firstName: "Sophia",
@@ -172,7 +156,7 @@
         });
       }
 
-      function loadScenario4() {
+      function scenario4() {
         fill({
           email: "existing.contact@example.com",
           firstName: "John",
@@ -185,7 +169,7 @@
         });
       }
 
-      function loadScenario5() {
+      function scenario5() {
         fill({
           email: "existing.contact@example.com",
           firstName: "John",
@@ -199,7 +183,7 @@
         });
       }
 
-      function loadScenario6() {
+      function scenario6() {
         fill({
           email: "duplicate.record@example.com",
           firstName: "Michael",
@@ -213,6 +197,39 @@
       }
 
       updatePreview();
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const payload = {};
+
+        new FormData(form).forEach((value, key) => {
+          payload[key] = value;
+        });
+
+        console.log("Submitting payload:", payload);
+
+        alert("Payload ready. Open browser console to view submitted data.");
+
+        // Customer.io form script will be loaded below
+      });
+    </script>
+
+    <!-- Customer.io Forms Loader -->
+    <script type="text/javascript">
+      (function () {
+        var t = document.createElement("script"),
+          s = document.getElementsByTagName("script")[0];
+
+        t.async = true;
+        t.id = "cio-forms-handler";
+        t.setAttribute("data-site-id", "ce11ab273bfbb500521b");
+        t.setAttribute("data-base-url", "https://customerioforms.com");
+
+        t.src = "https://customerioforms.com/assets/forms.js";
+
+        s.parentNode.insertBefore(t, s);
+      })();
     </script>
   </body>
 </html>
