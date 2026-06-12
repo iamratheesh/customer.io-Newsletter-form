@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lead Form Test</title>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 20px;
+      }
+
+      h1 {
+        margin-bottom: 20px;
+      }
+
+      .scenario-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 25px;
+      }
+
+      button {
+        padding: 10px 15px;
+        cursor: pointer;
+      }
+
+      form {
+        display: grid;
+        gap: 12px;
+      }
+
+      input {
+        padding: 10px;
+        font-size: 14px;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 250px;
+        margin-top: 20px;
+        font-family: monospace;
+      }
+
+      .submit-btn {
+        background: #0070f3;
+        color: white;
+        border: none;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Salesforce / Customer.io Test Form</h1>
+
+    <div class="scenario-buttons">
+      <button type="button" onclick="loadScenario1()">Scenario 1</button>
+      <button type="button" onclick="loadScenario2()">Scenario 2</button>
+      <button type="button" onclick="loadScenario3()">Scenario 3</button>
+      <button type="button" onclick="loadScenario4()">Scenario 4</button>
+      <button type="button" onclick="loadScenario5()">Scenario 5</button>
+      <button type="button" onclick="loadScenario6()">Scenario 6</button>
+    </div>
+
+    <form name="lead-form" method="POST" data-netlify="true">
+      <input type="hidden" name="form-name" value="lead-form" />
+
+      <input type="email" name="email" placeholder="Email" />
+
+      <input type="text" name="firstName" placeholder="First Name" />
+
+      <input type="text" name="lastName" placeholder="Last Name" />
+
+      <input type="text" name="formName" placeholder="Form Name" />
+
+      <input type="text" name="source" placeholder="Source" />
+
+      <input type="text" name="utm_source" placeholder="UTM Source" />
+
+      <input type="text" name="utm_medium" placeholder="UTM Medium" />
+
+      <input type="text" name="utm_campaign" placeholder="UTM Campaign" />
+
+      <input type="text" name="submittedAt" placeholder="Submitted At" />
+
+      <button class="submit-btn" type="submit">Submit to Netlify</button>
+    </form>
+
+    <h3>Payload Preview</h3>
+
+    <textarea id="preview" readonly></textarea>
+
+    <script>
+      const fields = [
+        "email",
+        "firstName",
+        "lastName",
+        "formName",
+        "source",
+        "utm_source",
+        "utm_medium",
+        "utm_campaign",
+        "submittedAt",
+      ];
+
+      function fill(data) {
+        fields.forEach((field) => {
+          const input = document.querySelector(`[name="${field}"]`);
+          input.value = data[field] || "";
+        });
+
+        updatePreview();
+      }
+
+      function updatePreview() {
+        const payload = {};
+
+        fields.forEach((field) => {
+          const value = document.querySelector(`[name="${field}"]`).value;
+
+          if (value) {
+            payload[field] = value;
+          }
+        });
+
+        document.getElementById("preview").value = JSON.stringify(
+          payload,
+          null,
+          2,
+        );
+      }
+
+      fields.forEach((field) => {
+        document
+          .querySelector(`[name="${field}"]`)
+          .addEventListener("input", updatePreview);
+      });
+
+      function loadScenario1() {
+        fill({
+          email: "newsletter.user@example.com",
+          source: "newsletter_signup",
+          utm_source: "linkedin",
+          utm_medium: "social",
+          utm_campaign: "ai_newsletter_june",
+        });
+      }
+
+      function loadScenario2() {
+        fill({
+          email: "existing.contact@example.com",
+          source: "newsletter_signup",
+          utm_source: "google",
+          utm_medium: "cpc",
+          utm_campaign: "newsletter_growth",
+        });
+      }
+
+      function loadScenario3() {
+        fill({
+          email: "sophia.reed@example.com",
+          firstName: "Sophia",
+          lastName: "Reed",
+          formName: "Contact Us",
+          source: "website",
+          utm_source: "google",
+          utm_medium: "organic",
+          utm_campaign: "website_leads",
+        });
+      }
+
+      function loadScenario4() {
+        fill({
+          email: "existing.contact@example.com",
+          firstName: "John",
+          lastName: "Smith",
+          formName: "Request Demo",
+          source: "website",
+          utm_source: "linkedin",
+          utm_medium: "paid_social",
+          utm_campaign: "demo_request",
+        });
+      }
+
+      function loadScenario5() {
+        fill({
+          email: "existing.contact@example.com",
+          firstName: "John",
+          lastName: "Smith",
+          formName: "Request Demo",
+          submittedAt: "2026-06-12T09:00:00Z",
+          source: "website",
+          utm_source: "google",
+          utm_medium: "cpc",
+          utm_campaign: "demo_campaign",
+        });
+      }
+
+      function loadScenario6() {
+        fill({
+          email: "duplicate.record@example.com",
+          firstName: "Michael",
+          lastName: "Johnson",
+          formName: "Contact Us",
+          source: "website",
+          utm_source: "email",
+          utm_medium: "marketing",
+          utm_campaign: "spring_campaign",
+        });
+      }
+
+      updatePreview();
+    </script>
+  </body>
+</html>
